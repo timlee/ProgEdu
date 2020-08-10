@@ -630,11 +630,16 @@ public class GitlabService {
    * @return target
    */
   public String cloneProject(String username, String projectName) {
+    LOGGER.info("START: cloneProject");
+
     String repoUrl = rootUrl + "/" + username + "/" + projectName + ".git";
     String target = System.getProperty("java.io.tmpdir") + "/uploads/" + projectName;
     String cloneCommand = "git clone " + repoUrl + " " + target;
     Linux linux = new Linux();
     linux.execLinuxCommand(cloneCommand);
+    LOGGER.info("cloneCommand: " + cloneCommand);
+
+    LOGGER.info("END: cloneProject");
     return target;
   }
 

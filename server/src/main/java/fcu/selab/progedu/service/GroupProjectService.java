@@ -53,10 +53,17 @@ public class GroupProjectService {
    */
   public GroupProjectService() {
     try {
+      LOGGER.info("START: GroupProjectService");
+
       zipHandler = new ZipHandler();
       mailUsername = jenkinsData.getMailUser();
       mailPassword = jenkinsData.getMailPassword();
       gitlabRootUsername = gitlabData.getGitlabRootUsername();
+      LOGGER.info("mailUsername: " + mailUsername);
+      LOGGER.info("mailPassword: " + mailPassword);
+      LOGGER.info("gitlabRootUsername: " + gitlabRootUsername);
+
+      LOGGER.info("END: GroupProjectService");
     } catch (LoadConfigFailureException e) {
       LOGGER.debug(ExceptionUtil.getErrorInfoFromException(e));
       LOGGER.error(e.getMessage());
@@ -70,7 +77,9 @@ public class GroupProjectService {
    * @param projectType projectType
    */
   public void createGroupProject(String groupName, String projectName, String projectType) {
-    String readMe = "Initialization";
+    LOGGER.info("START: createGroupProject");
+
+
 //    final GitlabService gitlabService = GitlabService.getInstance();
     final GroupProjectType groupProject = GroupProjectFactory.getGroupProjectType(projectType);
     final ProjectTypeEnum projectTypeEnum = ProjectTypeEnum.getProjectTypeEnum(projectType);
@@ -85,7 +94,10 @@ public class GroupProjectService {
 
     // 2. Clone the project to C:\\Users\\users\\AppData\\Temp\\uploads
     String cloneDirectoryPath = gitlabService.cloneProject(groupName, projectName);
+    LOGGER.info("cloneDirectoryPath: " + cloneDirectoryPath);
+
     // 3. if README is not null
+    String readMe = "Initialization";
     tomcatService.createReadmeFile(readMe, cloneDirectoryPath);
 
     // 4 create template
@@ -98,7 +110,7 @@ public class GroupProjectService {
     gitlabService.pushProject(cloneDirectoryPath);
 
     // 7. remove project file in linux
-    tomcatService.removeFile(uploadDir);
+//    tomcatService.removeFile(uploadDir); // for debug
 
     // 8. import project infomation to database
     addProject(groupName, projectName, readMe, projectTypeEnum);
@@ -114,6 +126,8 @@ public class GroupProjectService {
 
     // 10. Create each Jenkins Jobs
     groupProject.createJenkinsJob(groupName, projectName);
+
+    LOGGER.info("END: createGroupProject");
   }
 
   /**

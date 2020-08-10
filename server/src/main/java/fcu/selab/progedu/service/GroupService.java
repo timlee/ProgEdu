@@ -9,10 +9,13 @@ import fcu.selab.progedu.db.UserDbManager;
 import fcu.selab.progedu.db.service.GroupDbService;
 import fcu.selab.progedu.db.service.ProjectDbService;
 import fcu.selab.progedu.db.service.UserDbService;
+import fcu.selab.progedu.utils.ExceptionUtil;
 import org.gitlab.api.models.GitlabAccessLevel;
 import org.gitlab.api.models.GitlabGroup;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -45,6 +48,7 @@ public class GroupService {
   private UserDbService udb = UserDbService.getInstance();
   private GroupUserDbManager gudb = GroupUserDbManager.getInstance();
   private AssignmentService projectService = new AssignmentService();
+  private static final Logger LOGGER = LoggerFactory.getLogger(GroupProjectService.class);
 
   /**
    * create gitlab group
@@ -65,6 +69,7 @@ public class GroupService {
       @FormParam("member") List<String> members,
       @FormParam("projectType") String projectType,
       @FormParam("projectName") String projectName) {
+    LOGGER.info("START: createGroup");
 
     GitlabGroup gitlabGroup = gitlabService.createGroup(name);
     int groupGitLabId = gitlabGroup.getId();
@@ -79,6 +84,7 @@ public class GroupService {
     // create project
     GroupProjectService gps = new GroupProjectService();
     gps.createGroupProject(name, projectName, projectType);
+    LOGGER.info("END: createGroup");
 
     return Response.ok().build();
   }

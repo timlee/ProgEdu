@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -42,6 +43,8 @@ public class TomcatService {
    * @return target
    */
   public String storeFileToUploadsFolder(InputStream file, String projectName) {
+    LOGGER.info("START: storeFileToUploadsFolder");
+
     String uploadsDir = System.getProperty("java.io.tmpdir") + "/uploads/";
     File uploadsFolder = new File(uploadsDir);
     if (!uploadsFolder.exists()) {
@@ -49,11 +52,15 @@ public class TomcatService {
     }
     String target = uploadsDir + projectName;
     try {
+      LOGGER.info("file: " + file.toString());
+      LOGGER.info("target: " + target);
       storeFile(file, target);
     } catch (SecurityException | IOException e) {
       LOGGER.debug(ExceptionUtil.getErrorInfoFromException(e));
       LOGGER.error(e.getMessage());
     }
+
+    LOGGER.info("END: storeFileToUploadsFolder");
     return target;
   }
 
@@ -210,14 +217,19 @@ public class TomcatService {
    * @param path   (to do)
    */
   public void createReadmeFile(String readMe, String path) {
+    LOGGER.info("START: createReadmeFile");
+
     try (Writer writer = new BufferedWriter(
-        new OutputStreamWriter(new FileOutputStream(path + "/README.md"), "utf-8"));) {
+        new OutputStreamWriter( new FileOutputStream(path + "/README.md"),
+                                                     StandardCharsets.UTF_8) ) ) {
       writer.write(readMe);
     } catch (IOException e) {
       LOGGER.debug(ExceptionUtil.getErrorInfoFromException(e));
       LOGGER.error(e.getMessage());
       // report
     }
+
+    LOGGER.info("START: createReadmeFile");
   }
 
   /**
