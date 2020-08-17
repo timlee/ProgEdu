@@ -12,3 +12,5 @@ Checkstyle > Build > Deploy
 
 ## 文件
 [安裝與部屬流程說明](./Deployment_zh-tw.md)
+
+### 新的
